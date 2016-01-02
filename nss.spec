@@ -1,9 +1,9 @@
 %global nspr_version 4.10.10
 Name:          nss
-Version:       3.20.1
+Version:       3.21
 Release:       10
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_20_1_RTM/src/nss-3.20.1.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_20_1_RTM/src/nss-3.21.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
@@ -65,7 +65,7 @@ The NSS Security Tools allow developers to test, debug, and manage
 applications that use NSS.
 
 %prep
-%setup -q -n nss-3.20.1/nss
+%setup -q -n nss-3.21/nss
 
 %build
 export CC=gcc
@@ -74,6 +74,9 @@ export NSS_USE_SYSTEM_SQLITE=1
 export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
+export CFLAGS="$CFLAGS -Wno-error"
+export CXXFLAGS="$CFLAGS -Wno-error"
+
 make
 pushd tests
 HOST=127.0.0.1  bash ./all.sh
@@ -82,6 +85,8 @@ popd
 %install
 export FREEBL_NO_DEPEND=1
 export USE_64=1
+export CFLAGS="$CFLAGS -Wno-error"
+export CXXFLAGS="$CFLAGS -Wno-error"
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig

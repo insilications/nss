@@ -2,7 +2,7 @@
 Name:          nss
 Version:       3.21
 Release:       10
-URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS
+URL:           https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_20_1_RTM/src/nss-3.21.tar.gz
 Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_20_1_RTM/src/nss-3.21.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in

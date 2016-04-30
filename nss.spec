@@ -71,6 +71,7 @@ applications that use NSS.
 export CC=gcc
 export USE_64=1
 export NSS_USE_SYSTEM_SQLITE=1
+export NSS_ENABLE_WERROR=0
 export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"

@@ -1,9 +1,9 @@
-%global nspr_version 4.12
+%global nspr_version 4.13.1
 Name:          nss
-Version:       3.23
-Release:       14
+Version:       3.28
+Release:       15
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_23_RTM/src/nss-3.23.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_28_RTM/src/nss-3.28.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
@@ -11,8 +11,18 @@ Group:         Development/Tools
 License:       MPL-2.0
 BuildRequires: pkg-config
 BuildRequires: pkgconfig(nspr)
+BuildRequires: nspr-lib32
+BuildRequires: pkgconfig(32nspr)
 BuildRequires: pkgconfig(sqlite3)
+BuildRequires: pkgconfig(32sqlite3)
 BuildRequires: zlib-dev
+BuildRequires: zlib-dev32
+BuildRequires: gcc-dev32
+BuildRequires: gcc-libgcc32
+BuildRequires: gcc-libstdc++32
+BuildRequires: glibc-dev32
+BuildRequires: glibc-libc32
+
 Requires:      nss-libs
 Requires:      nss-bin
 Requires:      nspr >= %{nspr_version}
@@ -54,6 +64,17 @@ applications. Applications built with NSS can support SSL v2 and v3,
 TLS, PKCS #5, PKCS #7, PKCS #11, PKCS #12, S/MIME, X.509 v3
 certificates, and other security standards.
 
+%package lib32
+Summary:        NSS Libraries
+Group:          Security/Crypto Libraries
+
+%description lib32
+Network Security Services (NSS) is a set of libraries designed to
+support cross-platform development of security-enabled server
+applications. Applications built with NSS can support SSL v2 and v3,
+TLS, PKCS #5, PKCS #7, PKCS #11, PKCS #12, S/MIME, X.509 v3
+certificates, and other security standards.
+
 
 %package bin
 Summary:       Tools for developing, debugging, and managing NSS applications
@@ -65,9 +86,14 @@ The NSS Security Tools allow developers to test, debug, and manage
 applications that use NSS.
 
 %prep
-%setup -q -n nss-3.23/nss
+%setup -q -n nss-3.28/nss
+pushd ..
+cp -a nss build32
+popd
 
 %build
+export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
 export CC=gcc
 export USE_64=1
 export NSS_USE_SYSTEM_SQLITE=1
@@ -83,13 +109,31 @@ pushd tests
 HOST=127.0.0.1  bash ./all.sh
 popd
 
+pushd ../build32
+
+export CC=gcc
+unset USE_64
+export USE_32=1
+export NSS_USE_SYSTEM_SQLITE=1
+export NSS_ENABLE_WERROR=0
+export USE_SYSTEM_ZLIB=1
+export FREEBL_NO_DEPEND=1
+export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
+export CFLAGS="$CFLAGS -Wno-error -m32"
+export CXXFLAGS="$CFLAGS -Wno-error -m32"
+export LDFLAGS="$LDFLAGS -m32"
+make
+popd
+
 %install
+
 export FREEBL_NO_DEPEND=1
 export USE_64=1
 export CFLAGS="$CFLAGS -Wno-error"
 export CXXFLAGS="$CFLAGS -Wno-error"
 
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64
+mkdir -p ${RPM_BUILD_ROOT}/usr/lib32
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/nss
 mkdir -p ${RPM_BUILD_ROOT}/usr/include/nss3
@@ -97,7 +141,7 @@ mkdir -p ${RPM_BUILD_ROOT}/usr/bin
 mkdir -p ${RPM_BUILD_ROOT}/usr/sbin
 
 # Work inside dist where binaries are generated
-pushd ../dist/Linux*
+pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_DBG.OBJ
 
 # Remove static libraries
 rm -fr lib/*.a lib64/*.a
@@ -148,6 +192,29 @@ cp -L bin/atob \
       ${RPM_BUILD_ROOT}/usr/lib64/nss
 popd
 
+pushd ../dist/Linux*_x86_gcc_glibc_PTH_DBG.OBJ
+
+# Remove static libraries
+rm -fr lib/*.a lib64/*.a lib32/*.a
+
+# Copy dynamic libraries
+cp -L lib/libnss3.so \
+      lib/libnssdbm3.so \
+      lib/libnssdbm3.chk \
+      lib/libnssutil3.so \
+      lib/libsmime3.so \
+      lib/libsoftokn3.so \
+      lib/libsoftokn3.chk \
+      lib/libssl3.so \
+      ${RPM_BUILD_ROOT}/usr/lib32
+
+# Copy libfreebl libraries
+cp -L lib/libfreebl3.so \
+      lib/libfreebl3.chk \
+      ${RPM_BUILD_ROOT}/usr/lib32
+
+popd
+
 # Prepare pkgconfig file
 mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig/
 sed "s:%%LIBDIR%%:/usr/lib64:g
@@ -185,6 +252,19 @@ rm -fr ${RPM_BUILD_ROOT}
 /usr/lib64/libsoftokn3.chk
 /usr/lib64/libnssdbm3.so
 /usr/lib64/libnssdbm3.chk
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libnss3.so
+/usr/lib32/libnssutil3.so
+/usr/lib32/libsmime3.so
+/usr/lib32/libssl3.so
+/usr/lib32/libfreebl3.so
+/usr/lib32/libfreebl3.chk
+/usr/lib32/libsoftokn3.so
+/usr/lib32/libsoftokn3.chk
+/usr/lib32/libnssdbm3.so
+/usr/lib32/libnssdbm3.chk
 
 %files dev
 %defattr(644,root,root,755)

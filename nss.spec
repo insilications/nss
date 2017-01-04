@@ -1,7 +1,7 @@
 %global nspr_version 4.13.1
 Name:          nss
 Version:       3.28
-Release:       16
+Release:       17
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
 Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_28_RTM/src/nss-3.28.tar.gz
 Source1:       nss.pc.in
@@ -100,6 +100,7 @@ export NSS_USE_SYSTEM_SQLITE=1
 export NSS_ENABLE_WERROR=0
 export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
+export NSS_ENABLE_TLS_1_3=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 export CFLAGS="$CFLAGS -Wno-error"
 export CXXFLAGS="$CFLAGS -Wno-error"
@@ -118,6 +119,7 @@ export NSS_USE_SYSTEM_SQLITE=1
 export NSS_ENABLE_WERROR=0
 export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
+export NSS_ENABLE_TLS_1_3=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 export CFLAGS="$CFLAGS -Wno-error -m32"
 export CXXFLAGS="$CFLAGS -Wno-error -m32"

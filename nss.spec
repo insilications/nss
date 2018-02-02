@@ -1,7 +1,7 @@
 %global nspr_version 4.18
 Name:          nss
 Version:       3.35
-Release:       22
+Release:       23
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
 Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_35_RTM/src/nss-3.35.tar.gz
 Source1:       nss.pc.in

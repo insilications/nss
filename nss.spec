@@ -1,9 +1,9 @@
-%global nspr_version 4.18
+%global nspr_version 4.19
 Name:          nss
-Version:       3.35
+Version:       3.36
 Release:       23
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_35_RTM/src/nss-3.35.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_36_RTM/src/nss-3.36.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
@@ -87,7 +87,7 @@ The NSS Security Tools allow developers to test, debug, and manage
 applications that use NSS.
 
 %prep
-%setup -q -n nss-3.35/nss
+%setup -q -n nss-3.36/nss
 pushd ..
 cp -a nss build32
 popd

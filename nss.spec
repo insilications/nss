@@ -1,7 +1,7 @@
 %global nspr_version 4.19
 Name:          nss
 Version:       3.37.3
-Release:       24
+Release:       25
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
 Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_37_3_RTM/src/nss-3.37.3.tar.gz
 Source1:       nss.pc.in
@@ -23,7 +23,7 @@ BuildRequires: gcc-libstdc++32
 BuildRequires: glibc-dev32
 BuildRequires: glibc-libc32
 
-Requires:      nss-libs
+Requires:      nss-lib
 Requires:      nss-bin
 Requires:      nspr >= %{nspr_version}
 Requires:      p11-kit

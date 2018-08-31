@@ -1,4 +1,4 @@
-%global nspr_version 4.19
+%global nspr_version 4.20
 Name:          nss
 Version:       3.39
 Release:       25

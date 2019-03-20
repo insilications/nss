@@ -87,7 +87,7 @@ The NSS Security Tools allow developers to test, debug, and manage
 applications that use NSS.
 
 %prep
-%setup -q -n nss-3.42.1/nss
+%setup -q -n nss-3.43/nss
 pushd ..
 cp -a nss build32
 popd

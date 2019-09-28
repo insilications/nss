@@ -1,7 +1,7 @@
 %global nspr_version 4.22
 Name:          nss
 Version:       3.46
-Release:       30
+Release:       31
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
 Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_46_RTM/src/nss-3.46.tar.gz
 Source1:       nss.pc.in
@@ -122,9 +122,9 @@ export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
 export NSS_ENABLE_TLS_1_3=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
-export CFLAGS="$CFLAGS -Wno-error -m32"
-export CXXFLAGS="$CFLAGS -Wno-error -m32"
-export LDFLAGS="$LDFLAGS -m32"
+export CFLAGS="$CFLAGS -Wno-error -m32 -mstackrealign"
+export CXXFLAGS="$CFLAGS -Wno-error -m32 -mstackrealign"
+export LDFLAGS="$LDFLAGS -m32 -mstackrealign"
 make
 popd
 

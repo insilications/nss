@@ -1,16 +1,16 @@
-%global nspr_version 4.22
+%global nspr_version 4.23
 Name:          nss
-Version:       3.46.1
-Release:       32
+Version:       3.47
+Release:       33
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_46_1_RTM/src/nss-3.46.1.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_47_RTM/src/nss-3.47.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
 Group:         Development/Tools
 License:       MPL-2.0
 BuildRequires: pkg-config
-BuildRequires: pkgconfig(nspr)
+BuildRequires: pkgconfig(nspr) >= %{nspr_version}
 BuildRequires: nspr-lib32
 BuildRequires: pkgconfig(32nspr)
 BuildRequires: pkgconfig(sqlite3)
@@ -87,7 +87,7 @@ The NSS Security Tools allow developers to test, debug, and manage
 applications that use NSS.
 
 %prep
-%setup -q -n nss-3.46.1/nss
+%setup -q -n nss-3.47/nss
 pushd ..
 cp -a nss build32
 popd

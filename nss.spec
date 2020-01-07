@@ -1,9 +1,9 @@
 %global nspr_version 4.24
 Name:          nss
-Version:       3.48
-Release:       36
+Version:       3.49
+Release:       37
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_48_RTM/src/nss-3.48.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_49_RTM/src/nss-3.49.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
@@ -22,7 +22,6 @@ BuildRequires: gcc-libgcc32
 BuildRequires: gcc-libstdc++32
 BuildRequires: glibc-dev32
 BuildRequires: glibc-libc32
-Patch1:        0001-firefox-thread-fix.patch
 
 Requires:      nss-lib
 Requires:      nss-bin
@@ -88,8 +87,7 @@ The NSS Security Tools allow developers to test, debug, and manage
 applications that use NSS.
 
 %prep
-%setup -q -n nss-3.48/nss
-%patch1 -p1
+%setup -q -n nss-3.49/nss
 pushd ..
 cp -a nss build32
 popd

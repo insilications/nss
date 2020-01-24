@@ -226,9 +226,9 @@ s:%%NSPR_VERSION%%:%{nspr_version}:g" \
   %{SOURCE1} > %{buildroot}/usr/lib64/pkgconfig/nss.pc
 
 # Prepare nss-config file
-NSS_VMAJOR=`cat nss/lib/nss/nss.h | grep "#define.*NSS_VMAJOR" | awk '{print $3}'`
-NSS_VMINOR=`cat nss/lib/nss/nss.h | grep "#define.*NSS_VMINOR" | awk '{print $3}'`
-NSS_VPATCH=`cat nss/lib/nss/nss.h | grep "#define.*NSS_VPATCH" | awk '{print $3}'`
+NSS_VMAJOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMAJOR" | awk '{print $3}'`
+NSS_VMINOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMINOR" | awk '{print $3}'`
+NSS_VPATCH=`cat ./lib/nss/nss.h | grep "#define.*NSS_VPATCH" | awk '{print $3}'`
 cat %{SOURCE2} | sed -e "s,@libdir@,/usr/lib64,g" \
                      -e "s,@prefix@,/usr,g" \
                      -e "s,@exec_prefix@,/usr,g" \

@@ -135,13 +135,13 @@ export USE_64=1
 export CFLAGS="$CFLAGS -Wno-error"
 export CXXFLAGS="$CFLAGS -Wno-error"
 
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib64
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib32
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/nss
-mkdir -p ${RPM_BUILD_ROOT}/usr/include/nss3
-mkdir -p ${RPM_BUILD_ROOT}/usr/bin
-mkdir -p ${RPM_BUILD_ROOT}/usr/sbin
+mkdir -p %{buildroot}/usr/lib64
+mkdir -p %{buildroot}/usr/lib32
+mkdir -p %{buildroot}/usr/lib64/pkgconfig
+mkdir -p %{buildroot}/usr/lib64/nss
+mkdir -p %{buildroot}/usr/include/nss3
+mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}/usr/sbin
 
 # Work inside dist where binaries are generated
 pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_DBG.OBJ
@@ -150,7 +150,7 @@ pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_DBG.OBJ
 rm -fr lib/*.a lib64/*.a
 
 # Copy headers
-cp -rL ../public/nss/*.h ${RPM_BUILD_ROOT}/usr/include/nss3
+cp -rL ../public/nss/*.h %{buildroot}/usr/include/nss3
 
 # Copy dynamic libraries
 cp -L lib/libnss3.so \
@@ -161,12 +161,12 @@ cp -L lib/libnss3.so \
       lib/libsoftokn3.so \
       lib/libsoftokn3.chk \
       lib/libssl3.so \
-      ${RPM_BUILD_ROOT}/usr/lib64
+      %{buildroot}/usr/lib64
 
 # Copy libfreebl libraries
 cp -L lib/libfreebl3.so \
       lib/libfreebl3.chk \
-      ${RPM_BUILD_ROOT}/usr/lib64
+      %{buildroot}/usr/lib64
 
 # Copy tools
 cp -L bin/certutil \
@@ -177,7 +177,7 @@ cp -L bin/certutil \
       bin/signtool \
       bin/signver \
       bin/ssltap \
-      ${RPM_BUILD_ROOT}/usr/bin
+      %{buildroot}/usr/bin
 
 # Copy unsupported tools
 cp -L bin/atob \
@@ -192,7 +192,7 @@ cp -L bin/atob \
       bin/tstclnt \
       bin/vfyserv \
       bin/vfychain \
-      ${RPM_BUILD_ROOT}/usr/lib64/nss
+      %{buildroot}/usr/lib64/nss
 popd
 
 pushd ../dist/Linux*_x86_gcc_glibc_PTH_DBG.OBJ
@@ -209,39 +209,39 @@ cp -L lib/libnss3.so \
       lib/libsoftokn3.so \
       lib/libsoftokn3.chk \
       lib/libssl3.so \
-      ${RPM_BUILD_ROOT}/usr/lib32
+      %{buildroot}/usr/lib32
 
 # Copy libfreebl libraries
 cp -L lib/libfreebl3.so \
       lib/libfreebl3.chk \
-      ${RPM_BUILD_ROOT}/usr/lib32
+      %{buildroot}/usr/lib32
 
 popd
 
 # Prepare pkgconfig file
-mkdir -p ${RPM_BUILD_ROOT}/usr/lib64/pkgconfig/
+mkdir -p %{buildroot}/usr/lib64/pkgconfig/
 sed "s:%%LIBDIR%%:/usr/lib64:g
 s:%%VERSION%%:%{version}:g
 s:%%NSPR_VERSION%%:%{nspr_version}:g" \
-  %{SOURCE1} > $RPM_BUILD_ROOT/usr/lib64/pkgconfig/nss.pc
+  %{SOURCE1} > %{buildroot}/usr/lib64/pkgconfig/nss.pc
 
 # Prepare nss-config file
 NSS_VMAJOR=`cat nss/lib/nss/nss.h | grep "#define.*NSS_VMAJOR" | awk '{print $3}'`
 NSS_VMINOR=`cat nss/lib/nss/nss.h | grep "#define.*NSS_VMINOR" | awk '{print $3}'`
 NSS_VPATCH=`cat nss/lib/nss/nss.h | grep "#define.*NSS_VPATCH" | awk '{print $3}'`
 cat %{SOURCE2} | sed -e "s,@libdir@,/usr/lib64,g" \
-                     -e "s,@prefix@,%{_prefix},g" \
-                     -e "s,@exec_prefix@,%{_prefix},g" \
+                     -e "s,@prefix@,/usr,g" \
+                     -e "s,@exec_prefix@,/usr,g" \
                      -e "s,@includedir@,/usr/include/nss3,g" \
                      -e "s,@MOD_MAJOR_VERSION@,$NSS_VMAJOR,g" \
                      -e "s,@MOD_MINOR_VERSION@,$NSS_VMINOR,g" \
                      -e "s,@MOD_PATCH_VERSION@,$NSS_VPATCH,g" \
-                     > ${RPM_BUILD_ROOT}/usr/bin/nss-config
-chmod 755 $RPM_BUILD_ROOT/usr/bin/nss-config
+                     > %{buildroot}/usr/bin/nss-config
+chmod 755 %{buildroot}/usr/bin/nss-config
 
 
 %clean
-rm -fr ${RPM_BUILD_ROOT}
+rm -fr %{buildroot}
 
 %files lib
 %defattr(-,root,root,-)

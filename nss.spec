@@ -107,9 +107,6 @@ export CFLAGS="$CFLAGS -Wno-error"
 export CXXFLAGS="$CFLAGS -Wno-error"
 
 make
-pushd tests
-HOST=127.0.0.1  bash ./all.sh
-popd
 
 pushd ../build32
 
@@ -239,6 +236,10 @@ cat %{SOURCE2} | sed -e "s,@libdir@,/usr/lib64,g" \
                      > %{buildroot}/usr/bin/nss-config
 chmod 755 %{buildroot}/usr/bin/nss-config
 
+%check
+pushd tests
+HOST=127.0.0.1  bash ./all.sh
+popd
 
 %clean
 rm -fr %{buildroot}

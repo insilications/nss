@@ -238,6 +238,7 @@ chmod 755 %{buildroot}/usr/bin/nss-config
 
 %check
 pushd tests
+export USE_64=1
 HOST=127.0.0.1  bash ./all.sh
 popd
 

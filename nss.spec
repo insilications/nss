@@ -1,9 +1,9 @@
 %global nspr_version 4.25
 Name:          nss
-Version:       3.52.1
-Release:       44
+Version:       3.53.1
+Release:       45
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_52_1_RTM/src/nss-3.52.1.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_53_1_RTM/src/nss-3.53.1.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
@@ -106,7 +106,9 @@ export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 export CFLAGS="$CFLAGS -Wno-error"
 export CXXFLAGS="$CFLAGS -Wno-error"
 
-make
+make -B -O -C coreconf/nsinstall %{?_smp_mflags} program
+make -B -O %{?_smp_mflags} export
+make -B -O %{?_smp_mflags} libs
 
 pushd ../build32
 
@@ -122,7 +124,11 @@ export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 export CFLAGS="$CFLAGS -Wno-error -m32 -mstackrealign"
 export CXXFLAGS="$CFLAGS -Wno-error -m32 -mstackrealign"
 export LDFLAGS="$LDFLAGS -m32 -mstackrealign"
-make
+
+make -B -O -C coreconf/nsinstall %{?_smp_mflags} program
+make -B -O %{?_smp_mflags} export
+make -B -O %{?_smp_mflags} libs
+
 popd
 
 %install

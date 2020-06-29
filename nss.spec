@@ -106,9 +106,7 @@ export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 export CFLAGS="$CFLAGS -Wno-error"
 export CXXFLAGS="$CFLAGS -Wno-error"
 
-make -B -O -C coreconf/nsinstall %{?_smp_mflags} program
-make -B -O %{?_smp_mflags} export
-make -B -O %{?_smp_mflags} libs
+make -O %{?_smp_mflags} all
 
 pushd ../build32
 
@@ -125,9 +123,7 @@ export CFLAGS="$CFLAGS -Wno-error -m32 -mstackrealign"
 export CXXFLAGS="$CFLAGS -Wno-error -m32 -mstackrealign"
 export LDFLAGS="$LDFLAGS -m32 -mstackrealign"
 
-make -B -O -C coreconf/nsinstall %{?_smp_mflags} program
-make -B -O %{?_smp_mflags} export
-make -B -O %{?_smp_mflags} libs
+make -O %{?_smp_mflags} all
 
 popd
 

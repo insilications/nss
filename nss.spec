@@ -1,9 +1,9 @@
 %global nspr_version 4.29
 Name:          nss
-Version:       3.59
-Release:       51
+Version:       3.60
+Release:       52
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_59_RTM/src/nss-3.59.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_60_RTM/src/nss-3.60.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services
@@ -27,6 +27,8 @@ Requires:      nss-lib
 Requires:      nss-bin
 Requires:      nspr >= %{nspr_version}
 Requires:      p11-kit
+
+Patch1: 0001-Skip-dbtest-that-fails-with-sqlite-3.34.0.patch
 
 %description
 Network Security Services (NSS) is a set of libraries designed
@@ -88,6 +90,7 @@ applications that use NSS.
 
 %prep
 %setup -q -n nss-%{version}/nss
+%patch1 -p1
 pushd ..
 cp -a nss build32
 popd

@@ -1,9 +1,9 @@
-%global nspr_version 4.29
+%global nspr_version 4.30
 Name:          nss
-Version:       3.63
-Release:       55
+Version:       3.64
+Release:       56
 URL:           https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/
-Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_63_RTM/src/nss-3.63.tar.gz
+Source0:       https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_64_RTM/src/nss-3.64.tar.gz
 Source1:       nss.pc.in
 Source2:       nss-config.in
 Summary:       Network Security Services

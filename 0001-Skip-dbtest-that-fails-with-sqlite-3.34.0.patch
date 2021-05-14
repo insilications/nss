@@ -6,6 +6,10 @@ Subject: [PATCH] Skip dbtest that fails with sqlite 3.34.0
 Root cause is unknown, but one of the dbtests began to fail after we
 updated sqlite to 3.34.0. Skip it for now.
 
+[2021-05-14]: An upstream bug report was filed on 2021-02-02 that contains more
+              detail on the underlying problem:
+              https://bugzilla.mozilla.org/show_bug.cgi?id=1690232
+
 Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
 ---
  tests/dbtests/dbtests.sh | 3 ++-

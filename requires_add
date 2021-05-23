@@ -1,6 +1,8 @@
 # This file contains additional runtime requirements that did not get
 # picked up automatically. One name per line, no whitespace.
 nspr
+nspr-dev
+nspr-dev32
 p11-kit
 nss-lib
 nss-bin

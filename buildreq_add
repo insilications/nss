@@ -39,7 +39,6 @@ libxml2-dev
 libxml2-staticdev
 nspr-dev
 nspr-dev32
-nspr-lib32
 nspr-staticdev
 nspr-staticdev32
 pkg-config

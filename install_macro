@@ -1,13 +1,3 @@
-## pgo generate
-export PGO_GEN="-fprofile-generate=/var/tmp/pgo -fprofile-dir=/var/tmp/pgo -fprofile-abs-path -fprofile-update=atomic -fprofile-arcs -ftest-coverage --coverage -fprofile-partial-training"
-export CFLAGS_GENERATE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-semantic-interposition -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc -Wl,--build-id=sha1 -fdevirtualize-at-ltrans -Wl,-z,now -Wl,-z,relro -Wl,-sort-common -fasynchronous-unwind-tables -lgcov --coverage $PGO_GEN"
-export FCFLAGS_GENERATE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-semantic-interposition -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc -Wl,--build-id=sha1 -fdevirtualize-at-ltrans -Wl,-z,now -Wl,-z,relro -Wl,-sort-common -fasynchronous-unwind-tables -lgcov --coverage $PGO_GEN"
-export FFLAGS_GENERATE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-semantic-interposition -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc -Wl,--build-id=sha1 -fdevirtualize-at-ltrans -Wl,-z,now -Wl,-z,relro -Wl,-sort-common -fasynchronous-unwind-tables -lgcov --coverage $PGO_GEN"
-export CXXFLAGS_GENERATE="-std=c++0x -g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-semantic-interposition -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -fvisibility-inlines-hidden -pipe -ffat-lto-objects -flto=16 -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc -Wl,--build-id=sha1 -fdevirtualize-at-ltrans -Wl,-z,now -Wl,-z,relro -Wl,-sort-common -fasynchronous-unwind-tables -lgcov --coverage $PGO_GEN"
-export LDFLAGS_GENERATE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -falign-functions=32 -flimit-function-alignment -fno-semantic-interposition -fno-stack-protector -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -mtls-dialect=gnu2 -fno-math-errno -fno-trapping-math -pipe -ffat-lto-objects -flto=16 -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc -lpthread -Wl,--build-id=sha1 -fdevirtualize-at-ltrans -Wl,-z,now -Wl,-z,relro -Wl,-sort-common -fasynchronous-unwind-tables -lgcov --coverage $PGO_GEN"
-## pgo use
-## -ffat-lto-objects -fno-PIE -fno-PIE -m64 -no-pie -fPIC -Wl,-z,max-page-size=0x1000 -fvisibility=hidden -flto-partition=none
-## gcc: -feliminate-unused-debug-types -fipa-pta -flto=16 -Wno-error -Wp,-D_REENTRANT -fno-common -funroll-loops
 export PGO_USE="-fprofile-use=/var/tmp/pgo -fprofile-dir=/var/tmp/pgo -fprofile-abs-path -fprofile-correction -fprofile-partial-training"
 export CFLAGS_USE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc $PGO_USE"
 export FCFLAGS_USE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc $PGO_USE"
@@ -19,11 +9,123 @@ export AR=/usr/bin/gcc-ar
 export RANLIB=/usr/bin/gcc-ranlib
 export NM=/usr/bin/gcc-nm
 #
+export CFLAGS="${CFLAGS_USE}"
+export CXXFLAGS="${CXXFLAGS_USE}"
+export FFLAGS="${FFLAGS_USE}"
+export FCFLAGS="${FCFLAGS_USE}"
+export LDFLAGS="${LDFLAGS_USE}"
+#
+export FREEBL_NO_DEPEND=1
+export USE_64=1
+export CFLAGS="$CFLAGS -Wno-error"
+export CXXFLAGS="$CFLAGS -Wno-error"
+export LDFLAGS="$LDFLAGS -Wno-error"
+#
 %global nspr_version 4.30
-%global _lto_cflags 1
-#global _lto_cflags %{nil}
-%global _disable_maintainer_mode 1
-#%global _disable_maintainer_mode %{nil}
 #
-export CCACHE_DISABLE=true
-#
+mkdir -p %{buildroot}/usr/lib64
+mkdir -p %{buildroot}/usr/lib32
+mkdir -p %{buildroot}/usr/lib64/pkgconfig
+mkdir -p %{buildroot}/usr/lib64/nss
+mkdir -p %{buildroot}/usr/include/nss3
+mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}/usr/sbin
+
+# Work inside dist where binaries are generated
+pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_DBG.OBJ
+
+# Remove static libraries
+#rm -fr lib/*.a lib64/*.a
+cp -L lib/*.a lib64/*.a %{buildroot}/usr/lib64
+
+# Copy headers
+cp -rL ../public/nss/*.h %{buildroot}/usr/include/nss3
+
+# Copy dynamic libraries
+cp -L lib/libnss3.so \
+      lib/libnssdbm3.so \
+      lib/libnssdbm3.chk \
+      lib/libnssutil3.so \
+      lib/libsmime3.so \
+      lib/libsoftokn3.so \
+      lib/libsoftokn3.chk \
+      lib/libssl3.so \
+      %{buildroot}/usr/lib64
+
+# Copy libfreebl libraries
+cp -L lib/libfreebl3.so \
+      lib/libfreebl3.chk \
+      %{buildroot}/usr/lib64
+
+# Copy tools
+cp -L bin/certutil \
+      bin/cmsutil \
+      bin/crlutil \
+      bin/modutil \
+      bin/pk12util \
+      bin/signtool \
+      bin/signver \
+      bin/ssltap \
+      %{buildroot}/usr/bin
+
+# Copy unsupported tools
+cp -L bin/atob \
+      bin/btoa \
+      bin/derdump \
+      bin/ocspclnt \
+      bin/pp \
+      bin/selfserv \
+      bin/shlibsign \
+      bin/strsclnt \
+      bin/symkeyutil \
+      bin/tstclnt \
+      bin/vfyserv \
+      bin/vfychain \
+      %{buildroot}/usr/lib64/nss
+popd
+
+pushd ../dist/Linux*_x86_gcc_glibc_PTH_DBG.OBJ
+
+# Remove static libraries
+#rm -fr lib/*.a lib64/*.a lib32/*.a
+cp -L lib/*.a lib64/*.a lib32/*.a %{buildroot}/usr/lib32
+
+
+# Copy dynamic libraries
+cp -L lib/libnss3.so \
+      lib/libnssdbm3.so \
+      lib/libnssdbm3.chk \
+      lib/libnssutil3.so \
+      lib/libsmime3.so \
+      lib/libsoftokn3.so \
+      lib/libsoftokn3.chk \
+      lib/libssl3.so \
+      %{buildroot}/usr/lib32
+
+# Copy libfreebl libraries
+cp -L lib/libfreebl3.so \
+      lib/libfreebl3.chk \
+      %{buildroot}/usr/lib32
+
+popd
+
+# Prepare pkgconfig file
+mkdir -p %{buildroot}/usr/lib64/pkgconfig/
+sed "s:%%LIBDIR%%:/usr/lib64:g
+s:%%VERSION%%:%{version}:g
+s:%%NSPR_VERSION%%:%{nspr_version}:g" \
+  %{SOURCE1} > %{buildroot}/usr/lib64/pkgconfig/nss.pc
+
+# Prepare nss-config file
+NSS_VMAJOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMAJOR" | awk '{print $3}'`
+NSS_VMINOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMINOR" | awk '{print $3}'`
+NSS_VPATCH=`cat ./lib/nss/nss.h | grep "#define.*NSS_VPATCH" | awk '{print $3}'`
+cat %{SOURCE2} | sed -e "s,@libdir@,/usr/lib64,g" \
+                     -e "s,@prefix@,/usr,g" \
+                     -e "s,@exec_prefix@,/usr,g" \
+                     -e "s,@includedir@,/usr/include/nss3,g" \
+                     -e "s,@MOD_MAJOR_VERSION@,$NSS_VMAJOR,g" \
+                     -e "s,@MOD_MINOR_VERSION@,$NSS_VMINOR,g" \
+                     -e "s,@MOD_PATCH_VERSION@,$NSS_VPATCH,g" \
+                     > %{buildroot}/usr/bin/nss-config
+chmod 755 %{buildroot}/usr/bin/nss-config

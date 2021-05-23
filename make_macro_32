@@ -8,3 +8,4 @@ export FREEBL_NO_DEPEND=1
 export NSS_ENABLE_TLS_1_3=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 make -O %{?_smp_mflags} V=1 VERBOSE=1
+popd

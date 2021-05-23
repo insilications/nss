@@ -118,7 +118,7 @@ unset https_proxy
 unset no_proxy
 export SSL_CERT_FILE=/var/cache/ca-certs/anchors/ca-certificates.crt
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1621769964
+export SOURCE_DATE_EPOCH=1621770568
 unset LD_AS_NEEDED
 export GCC_IGNORE_WERROR=1
 ## altflags_pgo content
@@ -168,6 +168,7 @@ export FREEBL_NO_DEPEND=1
 export NSS_ENABLE_TLS_1_3=1
 export BUILD_OPT=1
 export NSS_ENABLE_ECC=1
+export NSS_CYCLES=standard
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 # CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_LDFLAGS="${LDFLAGS} -lgcov --coverage"
 make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS} -lgcov --coverage" XLDFLAGS="${LDFLAGS} -lgcov --coverage" MY_EXTRA_LIBS="-lgcov" MY_EXTRA_SHARED_LIBS="-lgcov"
@@ -180,13 +181,14 @@ pushd tests
 export USE_64=1
 HOST=127.0.0.1  bash ./all.sh
 popd
+make distclean
 make clean
 export CFLAGS="${CFLAGS_USE}"
 export CXXFLAGS="${CXXFLAGS_USE}"
 export FFLAGS="${FFLAGS_USE}"
 export FCFLAGS="${FCFLAGS_USE}"
 export LDFLAGS="${LDFLAGS_USE}"
-## make_macro content
+## make_macro_pgo content
 export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
 export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
 export CC=gcc
@@ -198,10 +200,11 @@ export FREEBL_NO_DEPEND=1
 export NSS_ENABLE_TLS_1_3=1
 export BUILD_OPT=1
 export NSS_ENABLE_ECC=1
+export NSS_CYCLES=standard
+export NSS_DISABLE_GTESTS=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
-# CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_LDFLAGS="${LDFLAGS} -lgcov --coverage"
-make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS} -lgcov --coverage" XLDFLAGS="${LDFLAGS} -lgcov --coverage" MY_EXTRA_LIBS="-lgcov" MY_EXTRA_SHARED_LIBS="-lgcov"
-## make_macro end
+make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS}" XLDFLAGS="${LDFLAGS}" NSS_CYCLES=standard NSS_DISABLE_GTESTS=1
+## make_macro_pgo end
 ## ccache stats
 ccache -s
 ## ccache stats
@@ -237,7 +240,7 @@ ccache -s
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1621769964
+export SOURCE_DATE_EPOCH=1621770568
 rm -rf %{buildroot}
 pushd ../build32/
 %make_install32

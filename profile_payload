@@ -1,7 +1,4 @@
-pushd pr
-make -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS} -lgcov --coverage" HOST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_LDFLAGS="${LDFLAGS} -lgcov --coverage" EXTRA_LIBS="${LDFLAGS} -lgcov --coverage"
-cd tests
-make -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS} -lgcov --coverage" HOST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_LDFLAGS="${LDFLAGS} -lgcov --coverage" EXTRA_LIBS="${LDFLAGS} -lgcov --coverage"
-export LD_LIBRARY_PATH="../../dist/lib:$LD_LIBRARY_PATH"
-./runtests.sh "../../dist" || :
+pushd tests
+export USE_64=1
+HOST=127.0.0.1  bash ./all.sh
 popd

@@ -1,2 +1,23 @@
 autoreconf -v --install --force || :
 ./configure --program-prefix=%{?_program_prefix} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} --bindir=%{_bindir} --sbindir=%{_bindir} --sysconfdir=%{_sysconfdir} --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} --infodir=%{_infodir} --disable-debug --enable-optimize --enable-64bit --target=x86_64-generic-linux-gnu --with-arch=native
+
+    make nss_build_all
+
+The following environment variables might be useful:
+
+* `BUILD_OPT=1` to get an optimised build
+
+* `USE_64=1` to get a 64-bit build (recommended)
+
+export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+export CC=gcc
+export USE_64=1
+export NSS_USE_SYSTEM_SQLITE=1
+export NSS_ENABLE_WERROR=0
+export USE_SYSTEM_ZLIB=1
+export FREEBL_NO_DEPEND=1
+export NSS_ENABLE_TLS_1_3=1
+export BUILD_OPT=1
+export NSS_ENABLE_ECC=1
+export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"

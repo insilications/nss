@@ -1,0 +1,8 @@
+--enable-static
+--enable-shared
+--program-prefix=eu-
+--with-zlib
+--with-lzma
+--without-bzlib
+--disable-debuginfod
+--disable-libdebuginfod

@@ -5,14 +5,15 @@
 %define keepstatic 1
 Name     : nss
 Version  : 3.65
-Release  : 301
+Release  : 302
 URL      : file:///aot/build/clearlinux/packages/nss/nss-v3.65.tar.gz
 Source0  : file:///aot/build/clearlinux/packages/nss/nss-v3.65.tar.gz
-Source1  : /aot/build/clearlinux/packages/nss/nss-config.in
-Source2  : /aot/build/clearlinux/packages/nss/nss.pc.in
+Source1  : file:///aot/build/clearlinux/packages/nss/nss-config.in
+Source2  : file:///aot/build/clearlinux/packages/nss/nss.pc.in
 Summary  : Network Security Services
 Group    : Development/Tools
 License  : GPL-2.0
+Requires: nss-bin = %{version}-%{release}
 Requires: nspr
 Requires: nspr-dev
 Requires: nspr-dev32
@@ -63,6 +64,10 @@ BuildRequires : nspr-dev
 BuildRequires : nspr-dev32
 BuildRequires : nspr-staticdev
 BuildRequires : nspr-staticdev32
+BuildRequires : openssl-dev
+BuildRequires : openssl-dev32
+BuildRequires : openssl-staticdev
+BuildRequires : openssl-staticdev32
 BuildRequires : p11-kit
 BuildRequires : pkg-config
 BuildRequires : pkgconfig(32nspr)
@@ -104,6 +109,53 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+%package bin
+Summary: bin components for the nss package.
+Group: Binaries
+
+%description bin
+bin components for the nss package.
+
+
+%package dev
+Summary: dev components for the nss package.
+Group: Development
+Requires: nss-bin = %{version}-%{release}
+Provides: nss-devel = %{version}-%{release}
+Requires: nss = %{version}-%{release}
+
+%description dev
+dev components for the nss package.
+
+
+%package dev32
+Summary: dev32 components for the nss package.
+Group: Default
+Requires: nss-bin = %{version}-%{release}
+Requires: nss-dev = %{version}-%{release}
+
+%description dev32
+dev32 components for the nss package.
+
+
+%package staticdev
+Summary: staticdev components for the nss package.
+Group: Default
+Requires: nss-dev = %{version}-%{release}
+
+%description staticdev
+staticdev components for the nss package.
+
+
+%package staticdev32
+Summary: staticdev32 components for the nss package.
+Group: Default
+Requires: nss-dev32 = %{version}-%{release}
+
+%description staticdev32
+staticdev32 components for the nss package.
+
+
 %prep
 %setup -q -n nss
 cd %{_builddir}/nss
@@ -118,7 +170,7 @@ unset https_proxy
 unset no_proxy
 export SSL_CERT_FILE=/var/cache/ca-certs/anchors/ca-certificates.crt
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1621770568
+export SOURCE_DATE_EPOCH=1621776931
 unset LD_AS_NEEDED
 export GCC_IGNORE_WERROR=1
 ## altflags_pgo content
@@ -143,6 +195,7 @@ export AR=/usr/bin/gcc-ar
 export RANLIB=/usr/bin/gcc-ranlib
 export NM=/usr/bin/gcc-nm
 #
+%global nspr_version 4.30
 %global _lto_cflags 1
 #global _lto_cflags %{nil}
 %global _disable_maintainer_mode 1
@@ -151,6 +204,8 @@ export NM=/usr/bin/gcc-nm
 export CCACHE_DISABLE=true
 #
 ## altflags_pgo end
+if [ ! -f statuspgo ]; then
+echo PGO Phase 1
 export CFLAGS="${CFLAGS_GENERATE}"
 export CXXFLAGS="${CXXFLAGS_GENERATE}"
 export FFLAGS="${FFLAGS_GENERATE}"
@@ -179,10 +234,14 @@ ccache -s
 
 pushd tests
 export USE_64=1
-HOST=127.0.0.1  bash ./all.sh
+HOST=127.0.0.1  bash ./all.sh || :
 popd
-make distclean
+make distclean || :
 make clean
+echo USED > statuspgo
+fi
+if [ -f statuspgo ]; then
+echo PGO Phase 2
 export CFLAGS="${CFLAGS_USE}"
 export CXXFLAGS="${CXXFLAGS_USE}"
 export FFLAGS="${FFLAGS_USE}"
@@ -203,11 +262,12 @@ export NSS_ENABLE_ECC=1
 export NSS_CYCLES=standard
 export NSS_DISABLE_GTESTS=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
-make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS}" XLDFLAGS="${LDFLAGS}" NSS_CYCLES=standard NSS_DISABLE_GTESTS=1
+make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS}" XLDFLAGS="${LDFLAGS}"
 ## make_macro_pgo end
 ## ccache stats
 ccache -s
 ## ccache stats
+fi
 
 pushd ../build32/
 export CFLAGS="-O2 -ffat-lto-objects -fuse-linker-plugin -pipe -fPIC -m32 -mstackrealign -march=native -mtune=native"
@@ -223,6 +283,7 @@ export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
 export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 ## make_macro_32 content
+export ASFLAGS="-m32"
 export CC=gcc
 unset USE_64
 export USE_32=1
@@ -231,8 +292,11 @@ export NSS_ENABLE_WERROR=0
 export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
 export NSS_ENABLE_TLS_1_3=1
+export BUILD_OPT=1
+export NSS_ENABLE_ECC=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 make -O %{?_smp_mflags} V=1 VERBOSE=1
+popd
 ## make_macro_32 end
 ## ccache stats
 ccache -s
@@ -240,18 +304,371 @@ ccache -s
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1621770568
+export SOURCE_DATE_EPOCH=1621776931
 rm -rf %{buildroot}
-pushd ../build32/
-%make_install32
-if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
-then
-    pushd %{buildroot}/usr/lib32/pkgconfig
-    for i in *.pc ; do ln -s $i 32$i ; done
-    popd
-fi
+## install_macro_32 start
+echo "Install"
+## install_macro_32 end
+## install_macro start
+export PGO_USE="-fprofile-use=/var/tmp/pgo -fprofile-dir=/var/tmp/pgo -fprofile-abs-path -fprofile-correction -fprofile-partial-training"
+export CFLAGS_USE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc $PGO_USE"
+export FCFLAGS_USE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc $PGO_USE"
+export FFLAGS_USE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc $PGO_USE"
+export CXXFLAGS_USE="-std=c++0x -g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -fvisibility-inlines-hidden -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc $PGO_USE"
+export LDFLAGS_USE="-g -O3 --param=lto-max-streaming-parallelism=16 -march=native -mtune=native -fgraphite-identity -Wall -Wl,--as-needed -Wl,--build-id=sha1 -Wl,--enable-new-dtags -Wl,--hash-style=gnu -Wl,-O2 -Wl,-z,now -Wl,-z,relro -falign-functions=32 -flimit-function-alignment -fasynchronous-unwind-tables -fdevirtualize-at-ltrans -floop-nest-optimize -floop-block -fno-math-errno -fno-semantic-interposition -fno-stack-protector -fno-trapping-math -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-vectorize -fuse-ld=bfd -fuse-linker-plugin -malign-data=cacheline -feliminate-unused-debug-types -fipa-pta -flto=16 -fno-plt -mtls-dialect=gnu2 -Wl,-sort-common -Wno-error -Wp,-D_REENTRANT -pipe -ffat-lto-objects -fPIC -Wl,-z,max-page-size=0x1000 -fomit-frame-pointer -pthread -static-libstdc++ -static-libgcc -lpthread $PGO_USE"
+#
+export AR=/usr/bin/gcc-ar
+export RANLIB=/usr/bin/gcc-ranlib
+export NM=/usr/bin/gcc-nm
+#
+export CFLAGS="${CFLAGS_USE}"
+export CXXFLAGS="${CXXFLAGS_USE}"
+export FFLAGS="${FFLAGS_USE}"
+export FCFLAGS="${FCFLAGS_USE}"
+export LDFLAGS="${LDFLAGS_USE}"
+#
+export FREEBL_NO_DEPEND=1
+export USE_64=1
+export CFLAGS="$CFLAGS -Wno-error"
+export CXXFLAGS="$CFLAGS -Wno-error"
+export LDFLAGS="$LDFLAGS -Wno-error"
+#
+%global nspr_version 4.30
+#
+mkdir -p %{buildroot}/usr/lib64
+mkdir -p %{buildroot}/usr/lib32
+mkdir -p %{buildroot}/usr/lib64/pkgconfig
+mkdir -p %{buildroot}/usr/lib64/nss
+mkdir -p %{buildroot}/usr/include/nss3
+mkdir -p %{buildroot}/usr/bin
+mkdir -p %{buildroot}/usr/sbin
+
+# Work inside dist where binaries are generated
+pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_OPT.OBJ
+
+# Remove static libraries
+#rm -fr lib/*.a lib64/*.a
+cp -L lib/*.a %{buildroot}/usr/lib64 || :
+cp -L lib64/*.a  %{buildroot}/usr/lib64 || :
+mv %{buildroot}/usr/lib64/libssl.a %{buildroot}/usr/lib64/libssl3.a
+
+# Copy headers
+cp -rL ../public/nss/*.h %{buildroot}/usr/include/nss3
+
+# Copy dynamic libraries
+cp -L lib/libnss3.so \
+      lib/libnssdbm3.so \
+      lib/libnssdbm3.chk \
+      lib/libnssutil3.so \
+      lib/libsmime3.so \
+      lib/libsoftokn3.so \
+      lib/libsoftokn3.chk \
+      lib/libssl3.so \
+      %{buildroot}/usr/lib64
+
+# Copy libfreebl libraries
+cp -L lib/libfreebl3.so \
+      lib/libfreebl3.chk \
+      %{buildroot}/usr/lib64
+
+# Copy tools
+cp -L bin/certutil \
+      bin/cmsutil \
+      bin/crlutil \
+      bin/modutil \
+      bin/pk12util \
+      bin/signtool \
+      bin/signver \
+      bin/ssltap \
+      %{buildroot}/usr/bin
+
+# Copy unsupported tools
+cp -L bin/atob \
+      bin/btoa \
+      bin/derdump \
+      bin/ocspclnt \
+      bin/pp \
+      bin/selfserv \
+      bin/shlibsign \
+      bin/strsclnt \
+      bin/symkeyutil \
+      bin/tstclnt \
+      bin/vfyserv \
+      bin/vfychain \
+      %{buildroot}/usr/lib64/nss
 popd
-%make_install
+
+pushd ../dist/Linux*_x86_gcc_glibc_PTH_OPT.OBJ
+
+# Remove static libraries
+#rm -fr lib/*.a lib64/*.a lib32/*.a
+cp -L lib/*.a %{buildroot}/usr/lib32 || :
+cp -L lib64/*.a %{buildroot}/usr/lib32 || :
+cp -L lib32/*.a %{buildroot}/usr/lib32 || :
+mv %{buildroot}/usr/lib32/libssl.a %{buildroot}/usr/lib32/libssl3.a
+
+# Copy dynamic libraries
+cp -L lib/libnss3.so \
+      lib/libnssdbm3.so \
+      lib/libnssdbm3.chk \
+      lib/libnssutil3.so \
+      lib/libsmime3.so \
+      lib/libsoftokn3.so \
+      lib/libsoftokn3.chk \
+      lib/libssl3.so \
+      %{buildroot}/usr/lib32
+
+# Copy libfreebl libraries
+cp -L lib/libfreebl3.so \
+      lib/libfreebl3.chk \
+      %{buildroot}/usr/lib32
+
+popd
+
+# Prepare pkgconfig file
+mkdir -p %{buildroot}/usr/lib64/pkgconfig/
+sed "s:%%LIBDIR%%:/usr/lib64:g
+s:%%VERSION%%:%{version}:g
+s:%%NSPR_VERSION%%:%{nspr_version}:g" \
+  %{SOURCE2} > %{buildroot}/usr/lib64/pkgconfig/nss.pc
+
+# Prepare nss-config file
+NSS_VMAJOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMAJOR" | awk '{print $3}'`
+NSS_VMINOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMINOR" | awk '{print $3}'`
+NSS_VPATCH=`cat ./lib/nss/nss.h | grep "#define.*NSS_VPATCH" | awk '{print $3}'`
+cat %{SOURCE1} | sed -e "s,@libdir@,/usr/lib64,g" \
+                     -e "s,@prefix@,/usr,g" \
+                     -e "s,@exec_prefix@,/usr,g" \
+                     -e "s,@includedir@,/usr/include/nss3,g" \
+                     -e "s,@MOD_MAJOR_VERSION@,$NSS_VMAJOR,g" \
+                     -e "s,@MOD_MINOR_VERSION@,$NSS_VMINOR,g" \
+                     -e "s,@MOD_PATCH_VERSION@,$NSS_VPATCH,g" \
+                     > %{buildroot}/usr/bin/nss-config
+chmod 755 %{buildroot}/usr/bin/nss-config
+## install_macro end
 
 %files
 %defattr(-,root,root,-)
+/usr/lib32/libfreebl3.chk
+/usr/lib32/libnssdbm3.chk
+/usr/lib32/libsoftokn3.chk
+/usr/lib64/libfreebl3.chk
+/usr/lib64/libnssdbm3.chk
+/usr/lib64/libsoftokn3.chk
+
+%files bin
+%defattr(-,root,root,-)
+/usr/bin/certutil
+/usr/bin/cmsutil
+/usr/bin/crlutil
+/usr/bin/modutil
+/usr/bin/nss-config
+/usr/bin/pk12util
+/usr/bin/signtool
+/usr/bin/signver
+/usr/bin/ssltap
+
+%files dev
+%defattr(-,root,root,-)
+/usr/include/nss3/base64.h
+/usr/include/nss3/blapit.h
+/usr/include/nss3/cert.h
+/usr/include/nss3/certdb.h
+/usr/include/nss3/certt.h
+/usr/include/nss3/ciferfam.h
+/usr/include/nss3/cmmf.h
+/usr/include/nss3/cmmft.h
+/usr/include/nss3/cms.h
+/usr/include/nss3/cmsreclist.h
+/usr/include/nss3/cmst.h
+/usr/include/nss3/crmf.h
+/usr/include/nss3/crmft.h
+/usr/include/nss3/cryptohi.h
+/usr/include/nss3/cryptoht.h
+/usr/include/nss3/eccutil.h
+/usr/include/nss3/ecl-exp.h
+/usr/include/nss3/hasht.h
+/usr/include/nss3/jar-ds.h
+/usr/include/nss3/jar.h
+/usr/include/nss3/jarfile.h
+/usr/include/nss3/key.h
+/usr/include/nss3/keyhi.h
+/usr/include/nss3/keyt.h
+/usr/include/nss3/keythi.h
+/usr/include/nss3/lowkeyi.h
+/usr/include/nss3/lowkeyti.h
+/usr/include/nss3/nss.h
+/usr/include/nss3/nssb64.h
+/usr/include/nss3/nssb64t.h
+/usr/include/nss3/nssbase.h
+/usr/include/nss3/nssbaset.h
+/usr/include/nss3/nssckbi.h
+/usr/include/nss3/nssckepv.h
+/usr/include/nss3/nssckft.h
+/usr/include/nss3/nssckfw.h
+/usr/include/nss3/nssckfwc.h
+/usr/include/nss3/nssckfwt.h
+/usr/include/nss3/nssckg.h
+/usr/include/nss3/nssckmdt.h
+/usr/include/nss3/nssckt.h
+/usr/include/nss3/nssilckt.h
+/usr/include/nss3/nssilock.h
+/usr/include/nss3/nsslocks.h
+/usr/include/nss3/nssrwlk.h
+/usr/include/nss3/nssrwlkt.h
+/usr/include/nss3/nssutil.h
+/usr/include/nss3/ocsp.h
+/usr/include/nss3/ocspt.h
+/usr/include/nss3/p12.h
+/usr/include/nss3/p12plcy.h
+/usr/include/nss3/p12t.h
+/usr/include/nss3/pk11func.h
+/usr/include/nss3/pk11hpke.h
+/usr/include/nss3/pk11pqg.h
+/usr/include/nss3/pk11priv.h
+/usr/include/nss3/pk11pub.h
+/usr/include/nss3/pk11sdr.h
+/usr/include/nss3/pkcs11.h
+/usr/include/nss3/pkcs11f.h
+/usr/include/nss3/pkcs11n.h
+/usr/include/nss3/pkcs11p.h
+/usr/include/nss3/pkcs11t.h
+/usr/include/nss3/pkcs11u.h
+/usr/include/nss3/pkcs11uri.h
+/usr/include/nss3/pkcs12.h
+/usr/include/nss3/pkcs12t.h
+/usr/include/nss3/pkcs1sig.h
+/usr/include/nss3/pkcs7t.h
+/usr/include/nss3/portreg.h
+/usr/include/nss3/preenc.h
+/usr/include/nss3/secasn1.h
+/usr/include/nss3/secasn1t.h
+/usr/include/nss3/seccomon.h
+/usr/include/nss3/secder.h
+/usr/include/nss3/secdert.h
+/usr/include/nss3/secdig.h
+/usr/include/nss3/secdigt.h
+/usr/include/nss3/secerr.h
+/usr/include/nss3/sechash.h
+/usr/include/nss3/secitem.h
+/usr/include/nss3/secmime.h
+/usr/include/nss3/secmod.h
+/usr/include/nss3/secmodt.h
+/usr/include/nss3/secoid.h
+/usr/include/nss3/secoidt.h
+/usr/include/nss3/secpkcs5.h
+/usr/include/nss3/secpkcs7.h
+/usr/include/nss3/secport.h
+/usr/include/nss3/shsign.h
+/usr/include/nss3/smime.h
+/usr/include/nss3/ssl.h
+/usr/include/nss3/sslerr.h
+/usr/include/nss3/sslexp.h
+/usr/include/nss3/sslproto.h
+/usr/include/nss3/sslt.h
+/usr/include/nss3/utilmodt.h
+/usr/include/nss3/utilpars.h
+/usr/include/nss3/utilparst.h
+/usr/include/nss3/utilrename.h
+/usr/lib64/libfreebl3.so
+/usr/lib64/libnss3.so
+/usr/lib64/libnssdbm3.so
+/usr/lib64/libnssutil3.so
+/usr/lib64/libsmime3.so
+/usr/lib64/libsoftokn3.so
+/usr/lib64/libssl3.so
+/usr/lib64/nss/atob
+/usr/lib64/nss/btoa
+/usr/lib64/nss/derdump
+/usr/lib64/nss/ocspclnt
+/usr/lib64/nss/pp
+/usr/lib64/nss/selfserv
+/usr/lib64/nss/shlibsign
+/usr/lib64/nss/strsclnt
+/usr/lib64/nss/symkeyutil
+/usr/lib64/nss/tstclnt
+/usr/lib64/nss/vfychain
+/usr/lib64/nss/vfyserv
+/usr/lib64/pkgconfig/nss.pc
+
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libfreebl3.so
+/usr/lib32/libnss3.so
+/usr/lib32/libnssdbm3.so
+/usr/lib32/libnssutil3.so
+/usr/lib32/libsmime3.so
+/usr/lib32/libsoftokn3.so
+/usr/lib32/libssl3.so
+
+%files staticdev
+%defattr(-,root,root,-)
+/usr/lib64/libcertdb.a
+/usr/lib64/libcerthi.a
+/usr/lib64/libcrmf.a
+/usr/lib64/libcryptohi.a
+/usr/lib64/libdbm.a
+/usr/lib64/libfreebl.a
+/usr/lib64/libjar.a
+/usr/lib64/libnss.a
+/usr/lib64/libnssb.a
+/usr/lib64/libnssckfw.a
+/usr/lib64/libnssdbm.a
+/usr/lib64/libnssdev.a
+/usr/lib64/libnsspki.a
+/usr/lib64/libnsssysinit.a
+/usr/lib64/libnssutil.a
+/usr/lib64/libpk11wrap.a
+/usr/lib64/libpkcs12.a
+/usr/lib64/libpkcs7.a
+/usr/lib64/libpkixcertsel.a
+/usr/lib64/libpkixchecker.a
+/usr/lib64/libpkixcrlsel.a
+/usr/lib64/libpkixmodule.a
+/usr/lib64/libpkixparams.a
+/usr/lib64/libpkixpki.a
+/usr/lib64/libpkixresults.a
+/usr/lib64/libpkixstore.a
+/usr/lib64/libpkixsystem.a
+/usr/lib64/libpkixtop.a
+/usr/lib64/libpkixutil.a
+/usr/lib64/libsectool.a
+/usr/lib64/libsmime.a
+/usr/lib64/libsoftokn.a
+/usr/lib64/libssl3.a
+
+%files staticdev32
+%defattr(-,root,root,-)
+/usr/lib32/libcertdb.a
+/usr/lib32/libcerthi.a
+/usr/lib32/libcrmf.a
+/usr/lib32/libcryptohi.a
+/usr/lib32/libdbm.a
+/usr/lib32/libfreebl.a
+/usr/lib32/libjar.a
+/usr/lib32/libnss.a
+/usr/lib32/libnssb.a
+/usr/lib32/libnssckfw.a
+/usr/lib32/libnssdbm.a
+/usr/lib32/libnssdev.a
+/usr/lib32/libnsspki.a
+/usr/lib32/libnsssysinit.a
+/usr/lib32/libnssutil.a
+/usr/lib32/libpk11wrap.a
+/usr/lib32/libpkcs12.a
+/usr/lib32/libpkcs7.a
+/usr/lib32/libpkixcertsel.a
+/usr/lib32/libpkixchecker.a
+/usr/lib32/libpkixcrlsel.a
+/usr/lib32/libpkixmodule.a
+/usr/lib32/libpkixparams.a
+/usr/lib32/libpkixpki.a
+/usr/lib32/libpkixresults.a
+/usr/lib32/libpkixstore.a
+/usr/lib32/libpkixsystem.a
+/usr/lib32/libpkixtop.a
+/usr/lib32/libpkixutil.a
+/usr/lib32/libsectool.a
+/usr/lib32/libsmime.a
+/usr/lib32/libsoftokn.a
+/usr/lib32/libssl3.a

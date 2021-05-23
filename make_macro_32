@@ -1,3 +1,4 @@
+export ASFLAGS="-m32"
 export CC=gcc
 unset USE_64
 export USE_32=1
@@ -6,6 +7,8 @@ export NSS_ENABLE_WERROR=0
 export USE_SYSTEM_ZLIB=1
 export FREEBL_NO_DEPEND=1
 export NSS_ENABLE_TLS_1_3=1
+export BUILD_OPT=1
+export NSS_ENABLE_ECC=1
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
 make -O %{?_smp_mflags} V=1 VERBOSE=1
 popd

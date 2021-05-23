@@ -32,11 +32,13 @@ mkdir -p %{buildroot}/usr/bin
 mkdir -p %{buildroot}/usr/sbin
 
 # Work inside dist where binaries are generated
-pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_DBG.OBJ
+pushd ../dist/Linux*_x86_64_gcc_glibc_PTH_64_OPT.OBJ
 
 # Remove static libraries
 #rm -fr lib/*.a lib64/*.a
-cp -L lib/*.a lib64/*.a %{buildroot}/usr/lib64
+cp -L lib/*.a %{buildroot}/usr/lib64 || :
+cp -L lib64/*.a  %{buildroot}/usr/lib64 || :
+mv %{buildroot}/usr/lib64/libssl.a %{buildroot}/usr/lib64/libssl3.a
 
 # Copy headers
 cp -rL ../public/nss/*.h %{buildroot}/usr/include/nss3
@@ -84,12 +86,14 @@ cp -L bin/atob \
       %{buildroot}/usr/lib64/nss
 popd
 
-pushd ../dist/Linux*_x86_gcc_glibc_PTH_DBG.OBJ
+pushd ../dist/Linux*_x86_gcc_glibc_PTH_OPT.OBJ
 
 # Remove static libraries
 #rm -fr lib/*.a lib64/*.a lib32/*.a
-cp -L lib/*.a lib64/*.a lib32/*.a %{buildroot}/usr/lib32
-
+cp -L lib/*.a %{buildroot}/usr/lib32 || :
+cp -L lib64/*.a %{buildroot}/usr/lib32 || :
+cp -L lib32/*.a %{buildroot}/usr/lib32 || :
+mv %{buildroot}/usr/lib32/libssl.a %{buildroot}/usr/lib32/libssl3.a
 
 # Copy dynamic libraries
 cp -L lib/libnss3.so \
@@ -114,13 +118,13 @@ mkdir -p %{buildroot}/usr/lib64/pkgconfig/
 sed "s:%%LIBDIR%%:/usr/lib64:g
 s:%%VERSION%%:%{version}:g
 s:%%NSPR_VERSION%%:%{nspr_version}:g" \
-  %{SOURCE1} > %{buildroot}/usr/lib64/pkgconfig/nss.pc
+  %{SOURCE2} > %{buildroot}/usr/lib64/pkgconfig/nss.pc
 
 # Prepare nss-config file
 NSS_VMAJOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMAJOR" | awk '{print $3}'`
 NSS_VMINOR=`cat ./lib/nss/nss.h | grep "#define.*NSS_VMINOR" | awk '{print $3}'`
 NSS_VPATCH=`cat ./lib/nss/nss.h | grep "#define.*NSS_VPATCH" | awk '{print $3}'`
-cat %{SOURCE2} | sed -e "s,@libdir@,/usr/lib64,g" \
+cat %{SOURCE1} | sed -e "s,@libdir@,/usr/lib64,g" \
                      -e "s,@prefix@,/usr,g" \
                      -e "s,@exec_prefix@,/usr,g" \
                      -e "s,@includedir@,/usr/include/nss3,g" \

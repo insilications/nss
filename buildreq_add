@@ -41,6 +41,10 @@ nspr-dev
 nspr-dev32
 nspr-staticdev
 nspr-staticdev32
+openssl-dev
+openssl-dev32
+openssl-staticdev
+openssl-staticdev32
 pkg-config
 procps-ng
 python3-dev

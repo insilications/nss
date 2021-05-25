@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : nss
 Version  : 3.65
-Release  : 303
+Release  : 304
 URL      : file:///aot/build/clearlinux/packages/nss/nss-v3.65.tar.gz
 Source0  : file:///aot/build/clearlinux/packages/nss/nss-v3.65.tar.gz
 Source1  : file:///aot/build/clearlinux/packages/nss/nss-config.in
@@ -14,6 +14,7 @@ Summary  : Network Security Services
 Group    : Development/Tools
 License  : GPL-2.0
 Requires: nss-bin = %{version}-%{release}
+Requires: nss-lib = %{version}-%{release}
 Requires: nspr
 Requires: nspr-dev
 Requires: nspr-dev32
@@ -120,6 +121,7 @@ bin components for the nss package.
 %package dev
 Summary: dev components for the nss package.
 Group: Development
+Requires: nss-lib = %{version}-%{release}
 Requires: nss-bin = %{version}-%{release}
 Provides: nss-devel = %{version}-%{release}
 Requires: nss = %{version}-%{release}
@@ -128,14 +130,20 @@ Requires: nss = %{version}-%{release}
 dev components for the nss package.
 
 
-%package dev32
-Summary: dev32 components for the nss package.
-Group: Default
-Requires: nss-bin = %{version}-%{release}
-Requires: nss-dev = %{version}-%{release}
+%package lib
+Summary: lib components for the nss package.
+Group: Libraries
 
-%description dev32
-dev32 components for the nss package.
+%description lib
+lib components for the nss package.
+
+
+%package lib32
+Summary: lib32 components for the nss package.
+Group: Default
+
+%description lib32
+lib32 components for the nss package.
 
 
 %package staticdev
@@ -150,7 +158,6 @@ staticdev components for the nss package.
 %package staticdev32
 Summary: staticdev32 components for the nss package.
 Group: Default
-Requires: nss-dev32 = %{version}-%{release}
 
 %description staticdev32
 staticdev32 components for the nss package.
@@ -170,7 +177,7 @@ unset https_proxy
 unset no_proxy
 export SSL_CERT_FILE=/var/cache/ca-certs/anchors/ca-certificates.crt
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1621965832
+export SOURCE_DATE_EPOCH=1621966869
 unset LD_AS_NEEDED
 export GCC_IGNORE_WERROR=1
 ## altflags_pgo content
@@ -304,7 +311,7 @@ ccache -s
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1621965832
+export SOURCE_DATE_EPOCH=1621966869
 rm -rf %{buildroot}
 ## install_macro_32 start
 echo "Install"
@@ -449,12 +456,6 @@ chmod 755 %{buildroot}/usr/bin/nss-config
 
 %files
 %defattr(-,root,root,-)
-/usr/lib32/libfreebl3.chk
-/usr/lib32/libnssdbm3.chk
-/usr/lib32/libsoftokn3.chk
-/usr/lib64/libfreebl3.chk
-/usr/lib64/libnssdbm3.chk
-/usr/lib64/libsoftokn3.chk
 
 %files bin
 %defattr(-,root,root,-)
@@ -570,13 +571,6 @@ chmod 755 %{buildroot}/usr/bin/nss-config
 /usr/include/nss3/utilpars.h
 /usr/include/nss3/utilparst.h
 /usr/include/nss3/utilrename.h
-/usr/lib64/libfreebl3.so
-/usr/lib64/libnss3.so
-/usr/lib64/libnssdbm3.so
-/usr/lib64/libnssutil3.so
-/usr/lib64/libsmime3.so
-/usr/lib64/libsoftokn3.so
-/usr/lib64/libssl3.so
 /usr/lib64/nss/atob
 /usr/lib64/nss/btoa
 /usr/lib64/nss/derdump
@@ -591,13 +585,29 @@ chmod 755 %{buildroot}/usr/bin/nss-config
 /usr/lib64/nss/vfyserv
 /usr/lib64/pkgconfig/nss.pc
 
-%files dev32
+%files lib
 %defattr(-,root,root,-)
+/usr/lib64/libfreebl3.chk
+/usr/lib64/libfreebl3.so
+/usr/lib64/libnss3.so
+/usr/lib64/libnssdbm3.chk
+/usr/lib64/libnssdbm3.so
+/usr/lib64/libnssutil3.so
+/usr/lib64/libsmime3.so
+/usr/lib64/libsoftokn3.chk
+/usr/lib64/libsoftokn3.so
+/usr/lib64/libssl3.so
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libfreebl3.chk
 /usr/lib32/libfreebl3.so
 /usr/lib32/libnss3.so
+/usr/lib32/libnssdbm3.chk
 /usr/lib32/libnssdbm3.so
 /usr/lib32/libnssutil3.so
 /usr/lib32/libsmime3.so
+/usr/lib32/libsoftokn3.chk
 /usr/lib32/libsoftokn3.so
 /usr/lib32/libssl3.so
 

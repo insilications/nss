@@ -4,5 +4,5 @@ nspr
 nspr-dev
 nspr-dev32
 p11-kit
-nss-lib
+nss-dev
 nss-bin

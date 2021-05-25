@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : nss
 Version  : 3.65
-Release  : 302
+Release  : 303
 URL      : file:///aot/build/clearlinux/packages/nss/nss-v3.65.tar.gz
 Source0  : file:///aot/build/clearlinux/packages/nss/nss-v3.65.tar.gz
 Source1  : file:///aot/build/clearlinux/packages/nss/nss-config.in
@@ -18,7 +18,7 @@ Requires: nspr
 Requires: nspr-dev
 Requires: nspr-dev32
 Requires: nss-bin
-Requires: nss-lib
+Requires: nss-dev
 Requires: p11-kit
 BuildRequires : binutils-dev
 BuildRequires : bison
@@ -170,7 +170,7 @@ unset https_proxy
 unset no_proxy
 export SSL_CERT_FILE=/var/cache/ca-certs/anchors/ca-certificates.crt
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1621776931
+export SOURCE_DATE_EPOCH=1621965832
 unset LD_AS_NEEDED
 export GCC_IGNORE_WERROR=1
 ## altflags_pgo content
@@ -304,7 +304,7 @@ ccache -s
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1621776931
+export SOURCE_DATE_EPOCH=1621965832
 rm -rf %{buildroot}
 ## install_macro_32 start
 echo "Install"

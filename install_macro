@@ -136,3 +136,6 @@ cat %{SOURCE1} | sed -e "s,@libdir@,/usr/lib64,g" \
                      -e "s,@MOD_PATCH_VERSION@,$NSS_VPATCH,g" \
                      > %{buildroot}/usr/bin/nss-config
 chmod 755 %{buildroot}/usr/bin/nss-config
+#
+install -dm 0755 %{buildroot}/usr/lib64/haswell/ || :
+cp --archive %{buildroot}/usr/lib64/lib*.so* %{buildroot}/usr/lib64/haswell/ || :

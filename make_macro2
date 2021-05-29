@@ -11,5 +11,5 @@ export BUILD_OPT=1
 export NSS_ENABLE_ECC=1
 export NSS_CYCLES=standard
 export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
-export NSS_DISABLE_GTESTS=1
-make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS}" XLDFLAGS="${LDFLAGS}"
+# CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_CXXFLAGS="${CXXFLAGS} -lgcov --coverage" HOST_LDFLAGS="${LDFLAGS} -lgcov --coverage"
+make -O -j16 V=1 VERBOSE=1 XCFLAGS="${CFLAGS} -lgcov --coverage" XLDFLAGS="${LDFLAGS} -lgcov --coverage" MY_EXTRA_LIBS="-lgcov" MY_EXTRA_SHARED_LIBS="-lgcov"

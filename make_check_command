@@ -1,3 +1,6 @@
-make check -j1 V=1 VERBOSE=1 || :
-make test -j1 V=1 VERBOSE=1 || :
-make tests -j1 V=1 VERBOSE=1 || :
+pushd tests
+export USE_64=1
+HOST=127.0.0.1  bash ./all.sh || :
+popd
+make distclean || :
+make clean || :

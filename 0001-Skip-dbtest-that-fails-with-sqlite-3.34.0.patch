@@ -27,5 +27,5 @@ index 9dcf738..e5d1058 100755
 +      #html_failed "Dbtest r/w succeeded in a readonly directory $ret"
 +      html_passed "Skipping test known to be failing with sqlite 3.34.0: Dbtest r/w succeeded in a readonly directory $ret"
      else
-       html_passed "Dbtest r/w didn't work in an readonly dir $ret" 
+       html_passed "Dbtest r/w didn't work in an readonly dir $ret"
      fi

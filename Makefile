@@ -1,5 +1,5 @@
 PKG_NAME := nss
-URL = https://github.com/insilications/nss-3.65.git
+URL = https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_68_RTM/src/nss-3.68.tar.gz
 ARCHIVES = 
 ARCHIVES_GIT = 
 

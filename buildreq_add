@@ -64,3 +64,4 @@ zlib-dev32
 zlib-staticdev
 zstd-dev
 zstd-staticdev
+p11-kit

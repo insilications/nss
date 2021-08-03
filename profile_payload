@@ -3,3 +3,4 @@ export USE_64=1
 HOST=127.0.0.1  bash ./all.sh || :
 popd
 make distclean || :
+make clean || :

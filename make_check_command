@@ -1,6 +1,18 @@
 pushd tests
 export USE_64=1
+export PKG_CONFIG_ALLOW_SYSTEM_LIBS=1
+export PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1
+export CC=gcc
+export USE_64=1
+export NSS_USE_SYSTEM_SQLITE=1
+export NSS_ENABLE_WERROR=0
+export USE_SYSTEM_ZLIB=1
+export FREEBL_NO_DEPEND=1
+export NSS_ENABLE_TLS_1_3=1
+export BUILD_OPT=1
+export NSS_ENABLE_ECC=1
+export NSS_CYCLES=standard
+export MAKE_FLAGS="BUILD_OPT=1 NSS_ENABLE_ECC=1"
+export NSS_DISABLE_GTESTS=1
 HOST=127.0.0.1  bash ./all.sh || :
 popd
-make distclean || :
-make clean || :

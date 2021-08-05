@@ -1,0 +1,401 @@
+From d07758caf0350a2b37fac392acd4c7dfd099a16d Mon Sep 17 00:00:00 2001
+From: Francisco Boni <boboniboni@gmail.com>
+Date: Thu, 5 Aug 2021 05:49:38 -0300
+Subject: [PATCH] pgo fix
+
+---
+ cmd/crmftest/Makefile              | 2 +-
+ cmd/lowhashtest/Makefile           | 2 +-
+ cmd/pk11mode/Makefile              | 2 +-
+ cmd/platlibs.mk                    | 4 ++--
+ cmd/shlibsign/Makefile             | 2 +-
+ cmd/shlibsign/mangle/Makefile      | 2 +-
+ coreconf/Linux.mk                  | 2 +-
+ coreconf/NCR3.0.mk                 | 2 +-
+ coreconf/NEC4.2.mk                 | 2 +-
+ coreconf/ReliantUNIX.mk            | 2 +-
+ coreconf/SunOS5.mk                 | 2 +-
+ lib/ckfw/builtins/Makefile         | 4 ++--
+ lib/ckfw/builtins/testlib/Makefile | 4 ++--
+ lib/ckfw/capi/Makefile             | 4 ++--
+ lib/nss/config.mk                  | 4 ++--
+ lib/smime/config.mk                | 4 ++--
+ lib/softoken/config.mk             | 4 ++--
+ lib/softoken/legacydb/config.mk    | 4 ++--
+ lib/ssl/config.mk                  | 4 ++--
+ lib/sysinit/config.mk              | 4 ++--
+ lib/util/config.mk                 | 4 ++--
+ 21 files changed, 32 insertions(+), 32 deletions(-)
+
+diff --git a/cmd/crmftest/Makefile b/cmd/crmftest/Makefile
+index 715d0b7..689c1cc 100644
+--- a/cmd/crmftest/Makefile
++++ b/cmd/crmftest/Makefile
+@@ -25,7 +25,7 @@ OS_LIBS += -lsvld
+ endif 
+ 
+ ifeq ($(OS_TARGET)$(OS_RELEASE), SunOS5.6)
+-OS_LIBS += -ldl -lxnet -lposix4 -lsocket -lnsl
++OS_LIBS += -ldl $(MY_EXTRA_SHARED_LIBS)  -lxnet -lposix4 -lsocket -lnsl
+ endif
+ 
+ EXTRA_LIBS += $(DIST)/lib/$(LIB_PREFIX)crmf.$(LIB_SUFFIX)
+diff --git a/cmd/lowhashtest/Makefile b/cmd/lowhashtest/Makefile
+index cfac770..09e8896 100644
+--- a/cmd/lowhashtest/Makefile
++++ b/cmd/lowhashtest/Makefile
+@@ -54,7 +54,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lfreebl3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/cmd/pk11mode/Makefile b/cmd/pk11mode/Makefile
+index e9cbcac..df1879e 100755
+--- a/cmd/pk11mode/Makefile
++++ b/cmd/pk11mode/Makefile
+@@ -39,7 +39,7 @@ else
+ EXTRA_SHARED_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/cmd/platlibs.mk b/cmd/platlibs.mk
+index 6401778..a3c7e82 100644
+--- a/cmd/platlibs.mk
++++ b/cmd/platlibs.mk
+@@ -183,7 +183,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ endif
+@@ -228,7 +228,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ ifndef NSS_BUILD_UTIL_ONLY
+diff --git a/cmd/shlibsign/Makefile b/cmd/shlibsign/Makefile
+index a119205..a1127fd 100644
+--- a/cmd/shlibsign/Makefile
++++ b/cmd/shlibsign/Makefile
+@@ -37,7 +37,7 @@ else
+ EXTRA_SHARED_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/cmd/shlibsign/mangle/Makefile b/cmd/shlibsign/mangle/Makefile
+index b52243e..5e5b639 100644
+--- a/cmd/shlibsign/mangle/Makefile
++++ b/cmd/shlibsign/mangle/Makefile
+@@ -37,7 +37,7 @@ else
+ EXTRA_SHARED_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/coreconf/Linux.mk b/coreconf/Linux.mk
+index 70651e2..d35049c 100644
+--- a/coreconf/Linux.mk
++++ b/coreconf/Linux.mk
+@@ -139,7 +139,7 @@ OS_CFLAGS		= $(DSO_CFLAGS) $(OS_REL_CFLAGS) $(ARCHFLAG) -pipe -ffunction-section
+ ifeq ($(KERNEL),Linux)
+ 	OS_CFLAGS	+= -DLINUX -Dlinux
+ endif
+-OS_LIBS			= $(OS_PTHREAD) -ldl -lc
++OS_LIBS			= $(OS_PTHREAD) -ldl $(MY_EXTRA_SHARED_LIBS)  -lc
+ 
+ ifeq ($(OS_TARGET),Android)
+ 	OS_LIBS		+= -llog
+diff --git a/coreconf/NCR3.0.mk b/coreconf/NCR3.0.mk
+index 7b8e31b..48b1825 100644
+--- a/coreconf/NCR3.0.mk
++++ b/coreconf/NCR3.0.mk
+@@ -31,7 +31,7 @@ else
+ #	OS_LIBS	+=
+ endif
+ 
+-#OS_LIBS    += -lsocket -lnsl -ldl -lc
++#OS_LIBS    += -lsocket -lnsl -ldl $(MY_EXTRA_SHARED_LIBS)  -lc
+ 
+ MKSHLIB     += $(LD) $(DSO_LDOPTS)
+ #DSO_LDOPTS += -G -z defs
+diff --git a/coreconf/NEC4.2.mk b/coreconf/NEC4.2.mk
+index 68cc146..1477c57 100644
+--- a/coreconf/NEC4.2.mk
++++ b/coreconf/NEC4.2.mk
+@@ -28,7 +28,7 @@ PROCESS_MAP_FILE = cp $< $@
+ RANLIB			= /bin/true
+ 
+ OS_CFLAGS		+= $(ODD_CFLAGS) -DSVR4 -D__SVR4 -DNEC -Dnec_ews -DHAVE_STRERROR
+-OS_LIBS			= -lsocket -lnsl -ldl $(LDOPTIONS)
++OS_LIBS			= -lsocket -lnsl -ldl $(MY_EXTRA_SHARED_LIBS)  $(LDOPTIONS)
+ LDOPTIONS		= -lc -L/usr/ucblib -lucb
+ 
+ NOSUCHFILE		= /nec-rm-f-sucks
+diff --git a/coreconf/ReliantUNIX.mk b/coreconf/ReliantUNIX.mk
+index 8af2c3d..ac7ec07 100644
+--- a/coreconf/ReliantUNIX.mk
++++ b/coreconf/ReliantUNIX.mk
+@@ -51,7 +51,7 @@ NOMD_OS_CFLAGS += $(ODD_CFLAGS)
+ 
+ # we do not have -MDupdate ...
+ OS_CFLAGS   += $(NOMD_OS_CFLAGS)
+-OS_LIBS     += -lsocket -lnsl -lresolv -lgen -ldl -lc /usr/ucblib/libucb.a
++OS_LIBS     += -lsocket -lnsl -lresolv -lgen -ldl $(MY_EXTRA_SHARED_LIBS)  -lc /usr/ucblib/libucb.a
+ 
+ ifdef DSO_BACKEND
+ 	DSO_LDOPTS += -h $(DSO_NAME)
+diff --git a/coreconf/SunOS5.mk b/coreconf/SunOS5.mk
+index 024c8a7..5fbf82d 100644
+--- a/coreconf/SunOS5.mk
++++ b/coreconf/SunOS5.mk
+@@ -139,4 +139,4 @@ else
+ RPATH = -R '$$ORIGIN'
+ endif
+ 
+-OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl -lc
++OS_LIBS += -lthread -lnsl -lsocket -lposix4 -ldl $(MY_EXTRA_SHARED_LIBS)  -lc
+diff --git a/lib/ckfw/builtins/Makefile b/lib/ckfw/builtins/Makefile
+index 2a633d2..792d791 100644
+--- a/lib/ckfw/builtins/Makefile
++++ b/lib/ckfw/builtins/Makefile
+@@ -36,7 +36,7 @@ ifdef NS_USE_GCC
+ EXTRA_SHARED_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ else 
+@@ -51,7 +51,7 @@ else
+ EXTRA_SHARED_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ endif
+diff --git a/lib/ckfw/builtins/testlib/Makefile b/lib/ckfw/builtins/testlib/Makefile
+index 9eb29dd..9c5a016 100644
+--- a/lib/ckfw/builtins/testlib/Makefile
++++ b/lib/ckfw/builtins/testlib/Makefile
+@@ -37,7 +37,7 @@ ifdef NS_USE_GCC
+ EXTRA_SHARED_LIBS +=  \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4            \
+-	-lplds4           \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4           \
+ 	$(NULL)
+ else # NS_USE_GCC - If not using GCC, inform the absolute path.
+@@ -51,7 +51,7 @@ else # OS_TARGET != WIN
+ EXTRA_SHARED_LIBS +=  \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4            \
+-	-lplds4           \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4           \
+ 	$(NULL)
+ endif # OS_TARGET
+diff --git a/lib/ckfw/capi/Makefile b/lib/ckfw/capi/Makefile
+index 3949d18..1151280 100644
+--- a/lib/ckfw/capi/Makefile
++++ b/lib/ckfw/capi/Makefile
+@@ -29,7 +29,7 @@ ifdef NS_USE_GCC
+ EXTRA_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	-lcrypt32 \
+ 	-ladvapi32 \
+@@ -50,7 +50,7 @@ else
+ EXTRA_LIBS += \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ endif
+diff --git a/lib/nss/config.mk b/lib/nss/config.mk
+index 3716721..10096eb 100644
+--- a/lib/nss/config.mk
++++ b/lib/nss/config.mk
+@@ -13,7 +13,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4\
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -35,7 +35,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/lib/smime/config.mk b/lib/smime/config.mk
+index 76aab75..7082d2e 100644
+--- a/lib/smime/config.mk
++++ b/lib/smime/config.mk
+@@ -15,7 +15,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -37,7 +37,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/lib/softoken/config.mk b/lib/softoken/config.mk
+index 771b93a..9cbd586 100644
+--- a/lib/softoken/config.mk
++++ b/lib/softoken/config.mk
+@@ -21,7 +21,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -46,7 +46,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ endif
+diff --git a/lib/softoken/legacydb/config.mk b/lib/softoken/legacydb/config.mk
+index 54a23c3..e77ed81 100644
+--- a/lib/softoken/legacydb/config.mk
++++ b/lib/softoken/legacydb/config.mk
+@@ -21,7 +21,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -44,7 +44,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ endif
+diff --git a/lib/ssl/config.mk b/lib/ssl/config.mk
+index df4ab35..f6956cf 100644
+--- a/lib/ssl/config.mk
++++ b/lib/ssl/config.mk
+@@ -17,7 +17,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -40,7 +40,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/lib/sysinit/config.mk b/lib/sysinit/config.mk
+index 33ef6e8..2b88400 100644
+--- a/lib/sysinit/config.mk
++++ b/lib/sysinit/config.mk
+@@ -18,7 +18,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4\
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -40,7 +40,7 @@ EXTRA_SHARED_LIBS += \
+ 	-lnssutil3 \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+diff --git a/lib/util/config.mk b/lib/util/config.mk
+index af42a2e..4839e59 100644
+--- a/lib/util/config.mk
++++ b/lib/util/config.mk
+@@ -11,7 +11,7 @@ EXTRA_SHARED_LIBS += \
+ 	-L$(DIST)/lib \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4\
+ 	$(NULL)
+ else # ! NS_USE_GCC
+@@ -30,7 +30,7 @@ EXTRA_SHARED_LIBS += \
+ 	-L$(DIST)/lib \
+ 	-L$(NSPR_LIB_DIR) \
+ 	-lplc4 \
+-	-lplds4 \
++	-lplds4 $(MY_EXTRA_SHARED_LIBS) \
+ 	-lnspr4 \
+ 	$(NULL)
+ 
+-- 
+2.32.0
+

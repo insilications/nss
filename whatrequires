@@ -1,1 +1,10 @@
 # This file contains recursive sources that require this package
+evolution-data-server-dev
+evolution-dev
+folks-dev
+libcacard-dev
+nss
+nss-dev
+nss-staticdev
+spice-dev
+xmlsec1-dev

@@ -331,6 +331,7 @@ libnss3.so:NSS_3.59
 libnss3.so:NSS_3.6
 libnss3.so:NSS_3.62
 libnss3.so:NSS_3.65
+libnss3.so:NSS_3.66
 libnss3.so:NSS_3.7
 libnss3.so:NSS_3.7.1
 libnss3.so:NSS_3.8
@@ -405,6 +406,7 @@ libnss3.so:PK11_CheckUserPassword
 libnss3.so:PK11_CipherOp
 libnss3.so:PK11_CloneContext
 libnss3.so:PK11_ConfigurePKCS11
+libnss3.so:PK11_ContextGetFIPSStatus
 libnss3.so:PK11_ConvertSessionPrivKeyToTokenPrivKey
 libnss3.so:PK11_ConvertSessionSymKeyToTokenSymKey
 libnss3.so:PK11_CopySymKeyForSigning
@@ -614,6 +616,7 @@ libnss3.so:PK11_MoveSymKey
 libnss3.so:PK11_NeedLogin
 libnss3.so:PK11_NeedPWInit
 libnss3.so:PK11_NeedUserInit
+libnss3.so:PK11_ObjectGetFIPSStatus
 libnss3.so:PK11_PBEKeyGen
 libnss3.so:PK11_PQG_DestroyParams
 libnss3.so:PK11_PQG_DestroyVerify
@@ -670,6 +673,7 @@ libnss3.so:PK11_Sign
 libnss3.so:PK11_SignWithMechanism
 libnss3.so:PK11_SignWithSymKey
 libnss3.so:PK11_SignatureLen
+libnss3.so:PK11_SlotGetLastFIPSStatus
 libnss3.so:PK11_SymKeyFromHandle
 libnss3.so:PK11_SymKeysToSameSlot
 libnss3.so:PK11_TokenExists
